@@ -135,6 +135,9 @@ void wave::fourier(int window_width, int direction){
     int d = direction;
     float PI = 3.14159265358979323846;
     float delta_w = -2.0 * PI * d/ float(N);
+
+    // key = frequency, value = offset in originial file of beginning of window
+    map<int, vector<int> > freq_bin;
     
     int repetitions = complex_data.size() / N;
     int left_over = complex_data.size() % N;
@@ -148,7 +151,7 @@ void wave::fourier(int window_width, int direction){
 	for(int i = place_holder; i < place_holder + N; i++){
 	    window.push_back(complex_data[i]);
 	}
-	place_holder += N;	
+
 
 	for(int i = 1; i < N; ){
 	    complex<double> myi(0,1);
@@ -190,15 +193,14 @@ void wave::fourier(int window_width, int direction){
 	    }
 	}
 	int freq_1 = 0; 
-	int freq_2 = 0;
-	int freq_3 = 0;
+	//	int freq_2 = 0;
+	//	int freq_3 = 0;
 	int max_1 = 0;
-	int max_2 = 0;
-	int max_3 = 0;
-
+	//	int max_2 = 0;
+	//	int max_3 = 0;
 	for(int i = 0; i < N/2; i++){
-	    cout<<"freq "<<44100 * i / N<<" = "<<abs(window[i])<<endl;
-
+	    // uncomment following line to display magnitude of each frequency
+	    //	    cout<<"freq "<<44100 * i / N<<" = "<<abs(window[i])<<endl;
 	    if(abs(window[i]) > max_1){
 		//	      max_3 = max_2;
 		//	      max_2 = max_1;
@@ -208,10 +210,16 @@ void wave::fourier(int window_width, int direction){
 		freq_1 = 44100 * i / N;
 	    }
 	}
+	
 	cout<<"Frequency "<<freq_1<<" with magnitude "<<max_1
 	    <<" is the largest component of window "<<this_rep - repetitions<<endl;
 	cout<<"        end of window "<<this_rep - repetitions<<endl;
-    }// end repetitions
+	// puts the beginning offset of the current window in the bin labelled with the largest frequency magnitude
+	freq_bin[freq_1].push_back(place_holder);
+	// if something is fucked up, this is it.  move back to right under where the window is filled.  
+	place_holder += N;	
+    }
+    // end repetitions
     // uncomment these next lines if you are running the inverse
     // FFT to see that it does transform the data back to its original state.  
     /*    if(-1 == d){
