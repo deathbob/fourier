@@ -17,6 +17,7 @@
 //#include "bobGraph.h"
 #include <complex>
 
+
 using namespace std;
 
 class wave
@@ -35,6 +36,8 @@ class wave
   void make_int();
   void make_complex();
   void fourier(int window_width, int direction);
+  void rebuild(wave to_build, int window_size);
+  vector<int> this_order;
 
  private:
   vector< complex<double> > complex_data;
@@ -44,6 +47,9 @@ class wave
   vector<char> infoBlock;
   vector<unsigned char> buffer;
   map<long long, vector<short> > markov;
+  // freq_bin: key = frequency, value = offset in originial file of beginning of window
+  map<int, vector<int> > freq_bin;
+
 
   unsigned long int dataLength;
   unsigned long int totalSize ;

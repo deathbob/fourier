@@ -47,6 +47,7 @@ wave::wave(){
     for (int i = 0; i < 12; i++){
 	infoBlock.push_back(tempInfoBlock[i]);
     }
+    
 };  // End of wave::wave(){};
 
 wave::wave(string fileName){
@@ -136,9 +137,6 @@ void wave::fourier(int window_width, int direction){
     float PI = 3.14159265358979323846;
     float delta_w = -2.0 * PI * d/ float(N);
 
-    // key = frequency, value = offset in originial file of beginning of window
-    map<int, vector<int> > freq_bin;
-    
     int repetitions = complex_data.size() / N;
     int left_over = complex_data.size() % N;
     cout<<"left over samples "<<left_over<<endl;
@@ -151,8 +149,6 @@ void wave::fourier(int window_width, int direction){
 	for(int i = place_holder; i < place_holder + N; i++){
 	    window.push_back(complex_data[i]);
 	}
-
-
 	for(int i = 1; i < N; ){
 	    complex<double> myi(0,1);
 	    complex<double> cos_w(cos(i * delta_w),0);
@@ -211,12 +207,12 @@ void wave::fourier(int window_width, int direction){
 	    }
 	}
 	
-	cout<<"Frequency "<<freq_1<<" with magnitude "<<max_1
-	    <<" is the largest component of window "<<this_rep - repetitions<<endl;
-	cout<<"        end of window "<<this_rep - repetitions<<endl;
+	//	cout<<"Frequency "<<freq_1<<" with magnitude "<<max_1<<" is the largest component of window "<<this_rep - repetitions<<endl;
+	//	//	cout<<"        end of window "<<this_rep - repetitions<<endl;
 	// puts the beginning offset of the current window in the bin labelled with the largest frequency magnitude
 	freq_bin[freq_1].push_back(place_holder);
-	// if something is fucked up, this is it.  move back to right under where the window is filled.  
+	this_order.push_back(freq_1);
+
 	place_holder += N;	
     }
     // end repetitions
@@ -227,6 +223,39 @@ void wave::fourier(int window_width, int direction){
 	    cout<<complex_data[i]<<endl;
 	}
 	}*/
+}
+
+void wave::rebuild(wave to_rebuild, int window_size){
+    // for each entry in this_order
+    // find a window based on the offset in freq_bin
+    // string together a new wave
+    // using buffer[] ?
+    vector<unsigned char> new_buffer;
+    int reps = to_rebuild.this_order.size();
+    int current_freq = 0;
+    int vec_size = 0;
+    int selected_offset = 0;
+
+    cout<<"Reps "<<reps<<endl;
+    for(int i = 0; i < reps; i++){
+	cout<<"Current rep "<<i<<endl;
+	current_freq = to_rebuild.this_order[i];
+	cout<<"    "<<"searching for "<<current_freq<<endl;
+	vec_size = freq_bin[current_freq].size();
+	cout<<"    "<<vec_size<<" Entries under "<<current_freq<<endl;
+	if(0 == vec_size){
+	    cout<<"*|*|*| BIG TROUBLE, no entries for freq "<<current_freq<<"*|*|*|*|*"<<endl;
+	}
+	else{
+	    selected_offset = freq_bin[current_freq][rand() % vec_size];
+	}
+	cout<<"    "<<"Selected offset "<<selected_offset<<endl;
+
+	for(int k = 0; k < (window_size * 2); k++){
+	    new_buffer.push_back(buffer[(selected_offset) + k]);
+	}
+    }
+    buffer = new_buffer;    
 }
 
 
@@ -302,7 +331,11 @@ wave wave::operator=(const wave& right){
     retWave.infoBlock = right.infoBlock;
     retWave.buffer = right.buffer;
     retWave.markov = right.markov;
-    
+    retWave.this_order = right.this_order;
+    retWave.freq_bin = right.freq_bin;
+    retWave.complex_data = right.complex_data;
+    retWave.int_data = right.int_data;
+
     retWave.dataLength = right.dataLength;
     retWave.totalSize = right.totalSize;
     retWave.fmtSize = right.fmtSize;
@@ -312,6 +345,7 @@ wave wave::operator=(const wave& right){
     retWave.bytesPerSec = right.bytesPerSec;
     retWave.byteDepth = right.byteDepth;
     retWave.bitDepth = right.bitDepth;
+
     return retWave;
 }
 
