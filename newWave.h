@@ -38,8 +38,10 @@ class wave
   void fourier(int window_width, int direction);
   void rebuild(wave to_build, int window_size);
   vector<int> this_order;
+  void build_hamming(int ham_size);
 
  private:
+  vector<double> hamming;
   vector< complex<double> > complex_data;
   vector<int> int_data;
   vector<char> header;

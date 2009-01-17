@@ -47,6 +47,7 @@ wave::wave(){
     for (int i = 0; i < 12; i++){
 	infoBlock.push_back(tempInfoBlock[i]);
     }
+
     
 };  // End of wave::wave(){};
 
@@ -128,14 +129,29 @@ void wave::make_complex(){
     //	cout<<"complex_data["<<i<<"] raw "<<complex_data[i]<<endl;
     //    }
 }
+
+void wave::build_hamming(int ham_size){
+    hamming.clear();
+    float PI = 3.14159265358979323846;
+    //    float ham_size_f = float(ham_size);
+    for(int ham = 0; ham < ham_size; ham++){
+	float temp = 0.54 - 0.46 * cos(2.0 * PI * float(ham) / float(ham_size + 1));
+	//	cout<<temp<<endl;
+	hamming.push_back(temp);
+    }
+}    
+
 // window width is size of samples to look at
 // direction specifies if this is the inverse or regular FFT
 void wave::fourier(int window_width, int direction){
+
     complex<double> e(2.71828183,0);
     int N = window_width;
     int d = direction;
     float PI = 3.14159265358979323846;
     float delta_w = -2.0 * PI * d/ float(N);
+
+    srand(time(NULL));
 
     int repetitions = complex_data.size() / N;
     int left_over = complex_data.size() % N;
@@ -146,9 +162,11 @@ void wave::fourier(int window_width, int direction){
     for(repetitions; repetitions > 0; repetitions--){
 	int r = N / 2;
 	vector< complex<double > > window;
+
 	for(int i = place_holder; i < place_holder + N; i++){
-	    window.push_back(complex_data[i]);
+	    window.push_back(complex_data[i] * hamming[i % N]);
 	}
+
 	for(int i = 1; i < N; ){
 	    complex<double> myi(0,1);
 	    complex<double> cos_w(cos(i * delta_w),0);
