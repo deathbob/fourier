@@ -233,6 +233,11 @@ void wave::fourier(int window_width, int direction, int overlap){
 	//	cout<<"Frequency "<<freq_1<<" with magnitude "<<max_1<<" is the largest component of window "<<this_rep - repetitions<<endl;
 	//	//	cout<<"        end of window "<<this_rep - repetitions<<endl;
 	// puts the beginning offset of the current window in the bin labelled with the largest frequency magnitude
+	if(place_holder % 2 != 0){
+	    cout<<"place_holder not on byte block offset, not gonna be good!"<<endl;
+	    place_holder -= 1;
+	}
+
 	freq_bin[freq_1].push_back(place_holder);
 
 	if(win_counter <= 0){
