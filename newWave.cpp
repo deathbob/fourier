@@ -154,6 +154,10 @@ void wave::fourier(int window_width, int direction, int overlap){
     srand(time(NULL));
 
     int N_overlap = N * (overlap / 100.0);
+    if(0 != N_overlap % 2){
+	N_overlap -= 1;
+	cout<<"Had to modify N_overlap to make things line up on word boundries "<<endl;
+    }
     cout<<"N_overlap "<<N_overlap<<endl;
     int win_counter = 0;
     
@@ -233,10 +237,7 @@ void wave::fourier(int window_width, int direction, int overlap){
 	//	cout<<"Frequency "<<freq_1<<" with magnitude "<<max_1<<" is the largest component of window "<<this_rep - repetitions<<endl;
 	//	//	cout<<"        end of window "<<this_rep - repetitions<<endl;
 	// puts the beginning offset of the current window in the bin labelled with the largest frequency magnitude
-	if(place_holder % 2 != 0){
-	    cout<<"place_holder not on byte block offset, not gonna be good!"<<endl;
-	    place_holder -= 1;
-	}
+
 
 	freq_bin[freq_1].push_back(place_holder);
 
@@ -246,7 +247,12 @@ void wave::fourier(int window_width, int direction, int overlap){
 	}
 	win_counter -= N_overlap;	
 
-	place_holder += N_overlap;	
+	place_holder += N_overlap;
+	if(place_holder % 2 != 0){
+	    cout<<"N_overlap responsible? "<<N_overlap<<endl;
+	    cout<<"place_holder not on byte block offset, not gonna be good!"<<endl;
+	    place_holder -= 1;
+	}
     }
     // end repetitions
     // uncomment these next lines if you are running the inverse
@@ -282,7 +288,7 @@ void wave::rebuild(wave to_rebuild, int window_size){
 	else{
 	    selected_offset = freq_bin[current_freq][rand() % vec_size];
 	}
-	cout<<"    "<<"Selected offset "<<selected_offset<<endl;
+	//	cout<<"    "<<"Selected offset "<<selected_offset<<endl;
 
 	for(int k = 0; k < (window_size * 2); k++){
 	    new_buffer.push_back(buffer[(selected_offset) + k]);
