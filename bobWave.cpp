@@ -7,7 +7,10 @@ int main()
     
     // cur_size must always be a power of 2 or the FFT will fall over.  
     // 1024, 2048, 4096, 8192 16384 32768 65536
-    int cur_size = 4096;
+    //    int cur_size = 4096;
+    int cur_size = 8192;
+    //    int cur_size = 16384;
+    
 
 
     wave mono1("Feel_The_Sun_Rise.wav");
@@ -21,7 +24,7 @@ int main()
 
     mono1.rebuild(mono2, cur_size);
 
-    mono1.writeW("feel_to_feel_13.wav");
+    mono1.writeW("feel_to_feel_15.wav");
 
     return 0;
 
