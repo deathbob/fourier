@@ -143,7 +143,7 @@ void wave::build_hamming(int ham_size){
 
 // window width is size of samples to look at
 // direction specifies if this is the inverse or regular FFT
-void wave::fourier(int window_width, int direction){
+void wave::fourier(int window_width, int direction, int overlap){
 
     complex<double> e(2.71828183,0);
     int N = window_width;
@@ -153,8 +153,13 @@ void wave::fourier(int window_width, int direction){
 
     srand(time(NULL));
 
-    int repetitions = complex_data.size() / N;
-    int left_over = complex_data.size() % N;
+    int N_overlap = N * (overlap / 100.0);
+    cout<<"N_overlap "<<N_overlap<<endl;
+    int win_counter = 0;
+    
+
+    int repetitions = complex_data.size() / N_overlap;
+    int left_over = complex_data.size() % N_overlap;
     cout<<"left over samples "<<left_over<<endl;
     int this_rep = repetitions;
     cout<<"repetitions "<<repetitions<<endl;
@@ -229,9 +234,14 @@ void wave::fourier(int window_width, int direction){
 	//	//	cout<<"        end of window "<<this_rep - repetitions<<endl;
 	// puts the beginning offset of the current window in the bin labelled with the largest frequency magnitude
 	freq_bin[freq_1].push_back(place_holder);
-	this_order.push_back(freq_1);
 
-	place_holder += N;	
+	if(win_counter <= 0){
+	    this_order.push_back(freq_1);
+	    win_counter += window_width;
+	}
+	win_counter -= N_overlap;	
+
+	place_holder += N_overlap;	
     }
     // end repetitions
     // uncomment these next lines if you are running the inverse

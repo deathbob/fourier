@@ -14,14 +14,14 @@ int main()
     //    wave mono1("airwar.wav");
     mono1.build_hamming(cur_size);
     mono1.make_complex();
-    mono1.fourier(cur_size, 1);
+    mono1.fourier(cur_size, 1, 32);
     //    mono1.fourier(cur_size, -1);
 
     wave mono2 = mono1;
 
     mono1.rebuild(mono2, cur_size);
 
-    mono1.writeW("feel_to_feel_10.wav");
+    mono1.writeW("feel_to_feel_13.wav");
 
     return 0;
 

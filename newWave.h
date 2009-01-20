@@ -35,7 +35,7 @@ class wave
   wave operator=(const wave& right);
   void make_int();
   void make_complex();
-  void fourier(int window_width, int direction);
+  void fourier(int window_width, int direction, int overlap);
   void rebuild(wave to_build, int window_size);
   vector<int> this_order;
   void build_hamming(int ham_size);
